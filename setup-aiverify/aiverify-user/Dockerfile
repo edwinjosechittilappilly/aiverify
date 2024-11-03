@@ -75,8 +75,8 @@ RUN useradd -u 10000 -g 10000 -ms /bin/bash $USER
 
 ###################  Clone aiverify repo ######################
 
-ARG BRANCH_TAG=main
-ARG REPO=aiverify-foundation/aiverify
+ARG BRANCH_TAG=test-dev
+ARG REPO=edwinjosechittilappilly/aiverify
 RUN echo "BRANCH_TAG=$BRANCH_TAG"
 WORKDIR /app
 RUN git clone https://github.com/$REPO --branch=$BRANCH_TAG aiverify
@@ -144,7 +144,11 @@ ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
 WORKDIR /app/aiverify/stock-plugins
 RUN for plugin_dir in *; do \
       echo "Unzipping plugin $plugin_dir"; \
-      unzip $plugin_dir/dist/*.zip -d ../ai-verify-portal/plugins/$plugin_dir; \
+      if [ -f "$plugin_dir/dist/*.zip" ]; then \
+        unzip $plugin_dir/dist/*.zip -d ../ai-verify-portal/plugins/$plugin_dir; \
+      else \
+        echo "Warning: No zip file found for $plugin_dir"; \
+      fi; \
     done
 
 RUN chown -R 10000:10000 /app/aiverify/ai-verify-portal/plugins
