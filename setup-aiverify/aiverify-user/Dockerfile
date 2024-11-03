@@ -142,12 +142,14 @@ ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
 
 # Unzip stock plugin bundles into the plugins folder
 WORKDIR /app/aiverify/stock-plugins
-RUN for plugin_dir in *; do \
-      echo "Unzipping plugin $plugin_dir"; \
-      if [ -f "$plugin_dir/dist/*.zip" ]; then \
-        unzip $plugin_dir/dist/*.zip -d ../ai-verify-portal/plugins/$plugin_dir; \
+RUN mkdir -p /app/aiverify/ai-verify-portal/plugins && \
+    for plugin_dir in *; do \
+      echo "Copying plugin $plugin_dir"; \
+      if [ -d "$plugin_dir" ]; then \
+        mkdir -p /app/aiverify/ai-verify-portal/plugins/$plugin_dir && \
+        cp -r "$plugin_dir/"* /app/aiverify/ai-verify-portal/plugins/$plugin_dir/; \
       else \
-        echo "Warning: No zip file found for $plugin_dir"; \
+        echo "Warning: No directory found for $plugin_dir"; \
       fi; \
     done
 
